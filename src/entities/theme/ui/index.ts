@@ -1,1 +1,1 @@
-export * from "./ThemeSwitch/ThemeSwitch";
+export * from "./theme-switch";

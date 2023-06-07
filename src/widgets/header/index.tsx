@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,46 +12,36 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import ThemeSwitch from "entities/theme/ui/ThemeSwitch/ThemeSwitch";
 import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "shared/libs/redux";
+import ThemeSwitch from "entities/theme/ui/theme-switch";
 import { removeActiveUser } from "entities/user/model";
 
 const pages = [
   {
-    name: "Табель",
+    name: "тувр",
     link: "timesheet",
-    access: ["SUPERVISOR", "USER", "TEAMLEAD"],
+    access: ["Супервизор", "Оператор", "Тимлидер"],
   },
-  // {
-  //   name: "Отчётность",
-  //   link: "accounting",
-  //   access: ["SUPERVISOR", "TEAMLEAD"],
-  // },
-  // {
-  //   name: "Операторы",
-  //   link: "operators",
-  //   access: ["SUPERVISOR", "TEAMLEAD"],
-  // },
+  { name: "отчётность", link: "accounting", access: ["Супервизор"] },
   {
-    name: "Сотрудники",
-    link: "employees",
-    access: ["SUPERVISOR"],
-  },
-  {
-    name: "Моя Команда",
-    link: "teams",
-    access: ["SUPERVISOR", "TEAMLEAD"],
+    name: "операторы",
+    link: "operators",
+    access: ["Супервизор", "Тимлидер"],
   },
 ];
-const settings = ["Выйти"];
+const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const Header = () => {
+const Header = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const navigate = useNavigate();
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
   if (!user.role) {
     return null;
   }
@@ -72,14 +62,9 @@ export const Header = () => {
   };
 
   return (
-    <AppBar
-      sx={{
-        bgcolor: (theme) => (theme.palette.mode === "dark" ? "#121212" : ""),
-      }}
-      position="static"
-    >
-      <Container maxWidth="xl">
-        <Toolbar sx={{ height: 50 }} variant="dense" disableGutters>
+    <AppBar position="static">
+      <Container maxWidth={false}>
+        <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -143,9 +128,7 @@ export const Header = () => {
               )}
             </Menu>
           </Box>
-          <AdbIcon
-            sx={{ display: { xs: "none", mobile: "flex", md: "none" }, mr: 1 }}
-          />
+          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -157,14 +140,14 @@ export const Header = () => {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: { xs: "0.01rem", mobile: ".3rem" },
+              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
             САМОКАТ
           </Typography>
-
+          <ThemeSwitch />
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map(
               (page) =>
@@ -184,8 +167,7 @@ export const Header = () => {
             )}
           </Box>
 
-          <Box sx={{ flexGrow: 0, minWidth: 118 }}>
-            <ThemeSwitch />
+          <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="R" />
@@ -212,7 +194,7 @@ export const Header = () => {
                   key={setting}
                   onClick={() => {
                     handleCloseUserMenu();
-                    setting === "Выйти" && dispatch(removeActiveUser());
+                    setting === "Logout" && dispatch(removeActiveUser());
                   }}
                 >
                   <Typography textAlign="center">{setting}</Typography>
@@ -225,3 +207,4 @@ export const Header = () => {
     </AppBar>
   );
 };
+export default Header;
