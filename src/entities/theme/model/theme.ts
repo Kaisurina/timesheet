@@ -1,16 +1,13 @@
 import { PaletteMode } from "@mui/material";
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface ITheme {
+export interface IThemeState {
   mode: PaletteMode;
 }
-const initialState: ITheme = {
-  mode: "dark",
-};
 
 export const themeSlice = createSlice({
   name: "theme",
-  initialState,
+  initialState: { mode: "dark" as PaletteMode },
   reducers: {
     themeSwitch(state) {
       if (state.mode === "dark") {

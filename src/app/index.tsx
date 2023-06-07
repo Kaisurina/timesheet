@@ -1,7 +1,6 @@
 import { withProviders } from "./providers";
 import { Routing } from "pages";
-import "./index.css";
-import Header from "widgets/header";
+import { Header } from "widgets";
 
 const App = () => {
   return (

@@ -1,5 +1,5 @@
 const Accounting = () => {
-  return <div>Accounting page</div>;
+  return <div>Акк</div>;
 };
 
 export default Accounting;

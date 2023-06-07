@@ -5,9 +5,6 @@ import {
   Reducer,
   AnyAction,
 } from "@reduxjs/toolkit";
-import userReducer from "entities/user/model/user";
-import recordReducer from "entities/timesheetrecord/model/record";
-import themeReducer, { ITheme } from "entities/theme/model/theme";
 import {
   persistStore,
   persistReducer,
@@ -18,8 +15,13 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import { IUsersState } from "entities/user/model/user";
 import storage from "redux-persist/lib/storage";
+import userReducer, {
+  invalidateAccessTokenListener,
+} from "entities/user/model/user";
+import themeReducer, { IThemeState } from "entities/theme/model/theme";
+import { IUsersState } from "entities/user/model/user";
+import { baseApi } from "shared/api";
 
 const userConfig = {
   key: "user",
@@ -38,10 +40,10 @@ const store = configureStore({
       AnyAction
     >,
     theme: persistReducer(themeConfig, themeReducer) as unknown as Reducer<
-      ITheme,
+      IThemeState,
       AnyAction
     >,
-    record: recordReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -49,7 +51,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(baseApi.middleware, invalidateAccessTokenListener.middleware),
 });
 
 export const persistor = persistStore(store);

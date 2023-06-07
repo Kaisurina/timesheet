@@ -1,4 +1,3 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,16 +6,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useAppDispatch } from "shared/libs/redux";
-import { loginByFormData } from "entities/user/model";
+import { loginThunk } from "entities/user/model";
 
 const Auth = () => {
   const dispatch = useAppDispatch();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    dispatch(loginByFormData(data));
-  };
-
+    dispatch(loginThunk(data));
+  }
   return (
     <Container component="main" maxWidth="xs">
       <Box
