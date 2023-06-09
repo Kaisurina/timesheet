@@ -27,7 +27,6 @@ export const UserEdit = ({ user }: UserEditProps) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data);
     editUser({
       userId: user.userId,
       positionId: position,

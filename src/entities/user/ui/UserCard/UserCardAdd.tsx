@@ -60,7 +60,7 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
             disableCloseOnSelect
             multiple={true}
             disablePortal
-            id="combo-box-demo"
+            id="team-users-add"
             options={data || []}
             getOptionLabel={(option) => option.fullName}
             size="small"

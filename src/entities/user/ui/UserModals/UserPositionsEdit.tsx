@@ -11,13 +11,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import { IPositionsState } from "entities/user/model";
-import { usersApi } from "entities/user/api/userService";
+import { useEditPositionMutation } from "entities/user/api/userService";
 type UserPositionsEditProps = {
   position: IPositionsState;
 };
 export const UserPositionsEdit = ({ position }: UserPositionsEditProps) => {
   const [open, setOpen] = useState(false);
-  const [editPosition] = usersApi.useEditPositionMutation();
+  const [editPosition] = useEditPositionMutation();
   const labelId = `checkbox-list-secondary-label-${position.id}`;
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -5,7 +5,7 @@ import {
   type FetchBaseQueryMeta,
 } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import { RootState } from "app/store";
+import { RootState } from "app/store";
 
 export const baseQuery: BaseQueryFn<
   string | FetchArgs,
@@ -15,13 +15,13 @@ export const baseQuery: BaseQueryFn<
   FetchBaseQueryMeta
 > = fetchBaseQuery({
   baseUrl: "http://128.140.91.138:9000/api",
-  // prepareHeaders: (headers, { getState }) => {
-  //   const { token } = (getState() as RootState).user;
+  prepareHeaders: (headers, { getState }) => {
+    const { token } = (getState() as RootState).user;
 
-  //   if (token) {
-  //     headers.set("Authorization", `Bearer ${token}`);
-  //   }
+    if (token) {
+      // headers.set("Authorization", `Bearer ${token}`);
+    }
 
-  //   return headers;
-  // },
+    return headers;
+  },
 });

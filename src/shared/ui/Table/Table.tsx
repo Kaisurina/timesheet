@@ -50,6 +50,7 @@ const TableCheckbox = ({ params }: ParamsProp) => {
   const [updatePost] = recordsApi.useUpdateRecordMutation();
   return (
     <Checkbox
+      size="small"
       checked={params.value}
       onChange={() => {
         params.api.updateRows([
@@ -80,6 +81,7 @@ const columns: GridColDef[] = [
     renderCell(params) {
       return (
         <DateTimePicker
+          format="DD MMMM |  HH:mm"
           sx={{ fieldset: { border: "0" } }}
           disabled
           value={dayjs.utc(params.value)}
@@ -92,20 +94,25 @@ const columns: GridColDef[] = [
       return (
         <DateTimePicker
           sx={{ fieldset: { border: "0" } }}
+          slotProps={{
+            openPickerButton: {
+              disabled: !dayjs.utc(params.row.startDate).isValid(),
+            },
+          }}
           onChange={(value) => {
-            params.api.setEditCellValue({
-              id,
-              field,
-              value,
-            });
-            if (dayjs.utc(value).toDate().toString() !== "Invalid Date") {
+            if (dayjs.utc(value).isValid()) {
               params.api.updateRows([
                 {
                   id,
-                  endDate: value,
+                  endDate: dayjs.utc(value),
                 },
               ]);
             }
+            params.api.setEditCellValue({
+              id,
+              field,
+              value: dayjs.utc(value),
+            });
           }}
           value={dayjs.utc(params.value)}
         />
@@ -132,13 +139,17 @@ const columns: GridColDef[] = [
       const { id, field } = params;
       return (
         <TimePicker
+          minTime={dayjs.utc(params.row.startDate)}
           slotProps={{
             textField: { size: "small" },
+            openPickerButton: {
+              disabled: !dayjs.utc(params.row.endDate).isValid(),
+            },
           }}
           sx={{ fieldset: { border: "0" } }}
-          onChange={(value) =>
-            params.api.setEditCellValue({ id, field, value })
-          }
+          onChange={(value) => {
+            params.api.setEditCellValue({ id, field, value });
+          }}
           value={dayjs.utc(params.value)}
           views={["hours", "minutes"]}
         />
@@ -176,6 +187,19 @@ const columns: GridColDef[] = [
     headerName: "1.5х",
     width: 50,
     editable: true,
+    renderEditCell(params) {
+      const { id, field } = params;
+      return (
+        <Checkbox
+          disabled={params.row.is20x}
+          size="small"
+          checked={params.value}
+          onChange={(e) => {
+            params.api.setEditCellValue({ id, field, value: e.target.checked });
+          }}
+        />
+      );
+    },
     disableColumnMenu: true,
   },
   {
@@ -185,6 +209,19 @@ const columns: GridColDef[] = [
     headerName: "2х",
     width: 50,
     editable: true,
+    renderEditCell(params) {
+      const { id, field } = params;
+      return (
+        <Checkbox
+          disabled={params.row.is15x}
+          size="small"
+          checked={params.value}
+          onChange={(e) => {
+            params.api.setEditCellValue({ id, field, value: e.target.checked });
+          }}
+        />
+      );
+    },
     disableColumnMenu: true,
   },
   {
@@ -257,15 +294,25 @@ const columns: GridColDef[] = [
 export const Table = ({ data, density, user }: TableProps) => {
   const [updatePost] = recordsApi.useUpdateRecordMutation();
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    console.log(newRow);
-    if (dayjs.utc(newRow.endDate).toDate().toString() === "Invalid Date") {
-      return oldRow;
+    if (dayjs.utc(newRow.endDate).format("hh:mm") === "12:00") {
+      newRow = {
+        ...newRow,
+        endDate: dayjs.utc(newRow.endDate).format("YYYY-MM-DDT23:59:59Z"),
+      };
     }
-    if (dayjs.utc(newRow.startDate).toDate().toString() === "Invalid Date") {
-      return oldRow;
+    if (
+      dayjs
+        .utc(newRow.endDate)
+        .add(1, "second")
+        .isAfter(dayjs.utc(newRow.startDate)) &&
+      dayjs.utc(newRow.endDate).isValid() &&
+      dayjs.utc(newRow.startDate).isValid() &&
+      dayjs.utc(newRow.endDate).diff(newRow.startDate, "hours") < 25
+    ) {
+      updatePost(newRow as ITimesheetRecord);
+      return newRow;
     }
-    updatePost(newRow as ITimesheetRecord);
-    return newRow;
+    return oldRow;
   };
   const handleProcessRowUpdateError = (error: Error) => {
     console.log(error);

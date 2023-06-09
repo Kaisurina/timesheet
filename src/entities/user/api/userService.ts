@@ -50,7 +50,7 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Positions"],
     }),
-    editPosition: builder.mutation<Array<IPositionsState>, IPositionsState>({
+    editPosition: builder.mutation<Array<IPositionsState>, any>({
       query: (position) => ({
         url: `/users/positions/edit`,
         method: "POST",
@@ -74,4 +74,5 @@ export const {
   useGetAllUsersPositionsQuery,
   useCreateNewUserMutation,
   useEditUserMutation,
+  useEditPositionMutation,
 } = usersApi;

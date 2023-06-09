@@ -8,7 +8,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormGroup from "@mui/material/FormGroup";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
-import AddIcon from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
 import CustomPagination from "./TablePagination";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -38,10 +38,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 const CustomFooter = ({ user }: CustomFooterProps) => {
   const [expanded, setExpanded] = useState(false);
+  const [is15x, setIs15x] = useState(false);
+  const [is20x, setIs20x] = useState(false);
   const [position, setPosition] = useState(user.positionId);
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs.utc());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs.utc());
-  // const [multipleDate, setMultipleDate] = useState<Dayjs[] | null[]>([dayjs()]);
   const [create] = recordsApi.useCreateRecordMutation();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -106,23 +107,13 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               py: 1,
             }}
           ></Box>
-          {/* <DatePicker
-            slots={{
-              openPickerIcon: AddIcon,
-            }}
-            sx={{
-              fieldset: { display: "none" },
-              input: { display: "none" },
-              width: "30px",
-              mr: "30px",
-              mt: "20px",
-              minWidth: "30px",
-            }}
-            onChange={(value) => {}}
-            value={[dayjs(), dayjs().add(1, "day")]}
-          /> */}
           <DateTimePicker
-            slotProps={{ textField: { size: "small" } }}
+            slotProps={{
+              textField: { size: "small" },
+              openPickerButton: {
+                disabled: !dayjs.utc(startDate).isValid(),
+              },
+            }}
             sx={{
               fieldset: { border: "0" },
               width: "195px",
@@ -142,33 +133,39 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               mr: "20px",
             }}
           >
-            {/* <TextField
-              fullWidth
-              value={endDate?.format("DD.MM.YYYY")}
-              size="small"
-              disabled
-              sx={{
-                zIndex: 2,
-                input: { px: 0, ml: 2 },
-                fieldset: { border: "0" },
-              }}
-            /> */}
             <TimePicker
+              minTime={startDate}
               slotProps={{
                 textField: { size: "small" },
+                openPickerButton: {
+                  disabled: !dayjs.utc(endDate).isValid(),
+                },
               }}
               sx={{
                 fieldset: { border: "0" },
               }}
               value={endDate}
               onChange={(value) => {
-                setEndDate(value);
+                if (
+                  value &&
+                  dayjs.utc(value).format("hh:mm") === "12:00" &&
+                  value.diff(startDate, "minutes") < 0
+                ) {
+                  setEndDate(dayjs.utc(value.format("YYYY-MM-DDT23:59:59Z")));
+                } else {
+                  setEndDate(value);
+                }
               }}
             />
           </Box>
 
           <Box
             sx={{
+              outline: endDate
+                ? endDate.diff(startDate, "minutes") < 0
+                  ? "solid #ff335f 1px"
+                  : null
+                : null,
               textAlign: "center",
               minWidth: "56px",
               width: "56px",
@@ -186,10 +183,21 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             row
           >
             <Tooltip title="1.5x">
-              <Checkbox sx={{ m: 0 }} value={true} name="is15x" size="small" />
+              <Checkbox
+                onChange={(e) => setIs15x(e.target.checked)}
+                disabled={is20x}
+                checked={is15x}
+                sx={{ m: 0 }}
+                value={true}
+                name="is15x"
+                size="small"
+              />
             </Tooltip>
             <Tooltip title="2x">
               <Checkbox
+                onChange={(e) => setIs20x(e.target.checked)}
+                disabled={is15x}
+                checked={is20x}
                 sx={{ m: 0, ml: "12px" }}
                 value={true}
                 name="is20x"
@@ -224,7 +232,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
                 mt: "10px",
               },
               mr: "20px",
-              minWidth: "330px",
+              minWidth: "260px",
               label: {
                 "&.Mui-focused": { display: "none" },
                 "&.MuiFormLabel-filled": { display: "none" },
@@ -241,9 +249,13 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             label="Комменатрий"
             variant="standard"
           />
-          <IconButton sx={{ mr: "5px" }} type="submit">
-            <AddIcon />
-          </IconButton>
+          <Button
+            disabled={endDate ? endDate?.diff(startDate, "minutes") < 0 : false}
+            sx={{ minWidth: 102, ml: 1, mr: "5px" }}
+            type="submit"
+          >
+            Сохранить
+          </Button>
         </Stack>
       </Collapse>
       <CustomPagination />

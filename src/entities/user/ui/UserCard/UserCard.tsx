@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -14,18 +14,20 @@ import { Table } from "shared/ui";
 import { recordsApi } from "entities/record/api/recordService";
 import { teamApi } from "entities/team/api/teamService";
 import { ITeam } from "entities/team/model";
+
 interface UserCardProps {
   card: ITeam;
   value: { startDate: string; endDate: string };
   teamleaderId: string;
 }
+
 export const UserCard = ({ card, value, teamleaderId }: UserCardProps) => {
   const { data } = recordsApi.useGetRecordsByUserQuery({
     ...value,
     userId: card.user.userId,
   });
   const [removeUser] = teamApi.useRemoveUserFromTeamMutation();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
