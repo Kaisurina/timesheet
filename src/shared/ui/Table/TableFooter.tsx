@@ -246,7 +246,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               },
               div: { mt: "0 !important", fontSize: "0.875rem" },
             }}
-            label="Комменатрий"
+            label="Комментарий"
             variant="standard"
           />
           <Button
