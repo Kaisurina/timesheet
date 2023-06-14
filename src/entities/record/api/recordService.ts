@@ -3,7 +3,14 @@ import { baseApi } from "shared/api";
 
 export const recordsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getRecordsByUser: builder.query<Array<ITimesheetRecord>, any>({
+    getRecordsByUser: builder.query<
+      Array<ITimesheetRecord>,
+      {
+        userId: string;
+        startDate: string;
+        endDate: string;
+      }
+    >({
       query: (value) => ({
         url: `/timesheet_records`,
         method: "POST",
@@ -24,16 +31,16 @@ export const recordsApi = baseApi.injectEndpoints({
       invalidatesTags: ["Record", "Team"],
     }),
     updateRecord: builder.mutation<Array<ITimesheetRecord>, ITimesheetRecord>({
-      query: (body) => ({
-        url: `/timesheet_records/${body.id}`,
+      query: (record) => ({
+        url: `/timesheet_records/${record.id}`,
         method: "PATCH",
         body: {
-          ...body,
+          ...record,
         },
       }),
       invalidatesTags: ["Record", "Team"],
     }),
-    deleteRecord: builder.mutation<null, string>({
+    deleteRecord: builder.mutation<void, string>({
       query: (id) => ({
         url: `/timesheet_records/${id}`,
         method: "DELETE",

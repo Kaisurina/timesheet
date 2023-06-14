@@ -17,13 +17,13 @@ import { ITeam } from "entities/team/model";
 
 interface UserCardProps {
   card: ITeam;
-  value: { startDate: string; endDate: string };
+  dates: { startDate: string; endDate: string };
   teamleaderId: string;
 }
 
-export const UserCard = ({ card, value, teamleaderId }: UserCardProps) => {
+export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
   const { data } = recordsApi.useGetRecordsByUserQuery({
-    ...value,
+    ...dates,
     userId: card.user.userId,
   });
   const [removeUser] = teamApi.useRemoveUserFromTeamMutation();

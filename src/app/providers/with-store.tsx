@@ -5,7 +5,7 @@ import store, { persistor } from "../store";
 export const withStore = (Component: React.ComponentType) => () =>
   (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <Component />
       </PersistGate>
     </Provider>

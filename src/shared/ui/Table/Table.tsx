@@ -16,6 +16,7 @@ import { recordsApi } from "entities/record/api/recordService";
 import { ITimesheetRecord } from "entities/record/model";
 import { PositionSelect } from "../PositionSelect/PositionSelect";
 import { IUsersState } from "entities/user/model";
+import { hoursConverter } from "shared/libs/hooks/hoursConverter";
 
 type TableProps = {
   data: ITimesheetRecord[] | undefined;
@@ -80,11 +81,17 @@ const columns: GridColDef[] = [
   {
     renderCell(params) {
       return (
+        // <div>
+        //   {dayjs
+        //     .utc(params.row.startDate)
+        //     .locale("ru")
+        //     .format("DD MMMM |  HH:mm")}
+        // </div>
         <DateTimePicker
-          format="DD MMMM |  HH:mm"
+          format={"DD MMMM |  HH:mm"}
           sx={{ fieldset: { border: "0" } }}
           disabled
-          value={dayjs.utc(params.value)}
+          value={dayjs.utc(dayjs.utc(params.row.startDate).locale("ru"))}
           slotProps={{ textField: { size: "small" } }}
         />
       );
@@ -100,18 +107,10 @@ const columns: GridColDef[] = [
             },
           }}
           onChange={(value) => {
-            if (dayjs.utc(value).isValid()) {
-              params.api.updateRows([
-                {
-                  id,
-                  endDate: dayjs.utc(value),
-                },
-              ]);
-            }
             params.api.setEditCellValue({
               id,
               field,
-              value: dayjs.utc(value),
+              value,
             });
           }}
           value={dayjs.utc(params.value)}
@@ -130,7 +129,12 @@ const columns: GridColDef[] = [
         <TimePicker
           sx={{ fieldset: { border: "0" } }}
           disabled
-          value={dayjs.utc(params.value)}
+          value={
+            dayjs.utc(params.row.endDate).isValid() &&
+            dayjs.utc(params.row.endDate).format("HH:mm:ss") === "23:59:59"
+              ? dayjs("2019-01-25")
+              : dayjs(dayjs.utc(params.row.endDate))
+          }
           slotProps={{ textField: { size: "small" } }}
         />
       );
@@ -139,7 +143,6 @@ const columns: GridColDef[] = [
       const { id, field } = params;
       return (
         <TimePicker
-          minTime={dayjs.utc(params.row.startDate)}
           slotProps={{
             textField: { size: "small" },
             openPickerButton: {
@@ -294,24 +297,23 @@ const columns: GridColDef[] = [
 export const Table = ({ data, density, user }: TableProps) => {
   const [updatePost] = recordsApi.useUpdateRecordMutation();
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    if (dayjs.utc(newRow.endDate).format("hh:mm") === "12:00") {
+    console.log(
+      dayjs.utc(newRow.endDate).isValid() &&
+        dayjs.utc(newRow.startDate).isValid()
+    );
+    if (
+      dayjs.utc(newRow.endDate).isValid() &&
+      dayjs.utc(newRow.startDate).isValid()
+    ) {
+      console.log("netut");
       newRow = {
         ...newRow,
-        endDate: dayjs.utc(newRow.endDate).format("YYYY-MM-DDT23:59:59Z"),
+        endDate: hoursConverter(newRow.startDate, newRow.endDate),
       };
-    }
-    if (
-      dayjs
-        .utc(newRow.endDate)
-        .add(1, "second")
-        .isAfter(dayjs.utc(newRow.startDate)) &&
-      dayjs.utc(newRow.endDate).isValid() &&
-      dayjs.utc(newRow.startDate).isValid() &&
-      dayjs.utc(newRow.endDate).diff(newRow.startDate, "hours") < 25
-    ) {
       updatePost(newRow as ITimesheetRecord);
       return newRow;
     }
+    console.log(oldRow);
     return oldRow;
   };
   const handleProcessRowUpdateError = (error: Error) => {

@@ -21,7 +21,7 @@ const Teams = () => {
       </Box>
       {value && (
         <UsersGrid
-          value={{
+          dates={{
             startDate: `${dayjs(value).format("YYYY-MM")}-01`,
             endDate: `${dayjs(value).add(1, "month").format("YYYY-MM")}-01`,
           }}

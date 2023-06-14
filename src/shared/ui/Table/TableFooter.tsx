@@ -17,6 +17,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { recordsApi } from "entities/record/api/recordService";
 import { styled } from "@mui/material/styles";
 import { IUsersState } from "entities/user/model";
+import { hoursConverter } from "shared/libs/hooks/hoursConverter";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -54,7 +55,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
       positionId: position || 6,
       updated: `${dayjs.utc()}`,
       startDate: startDate,
-      endDate: endDate,
+      endDate: hoursConverter(startDate || dayjs.utc(), endDate || dayjs.utc()),
       isConfirmed: false,
       isDeleted: false,
       is15x: Boolean(data.get("is15x")),
@@ -72,7 +73,11 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
           zIndex: "1",
         }}
         expand={expanded}
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => {
+          setExpanded(!expanded);
+          setStartDate(dayjs.utc());
+          setEndDate(dayjs.utc());
+        }}
         aria-expanded={expanded}
         aria-label="show more"
       >
@@ -122,7 +127,6 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             }}
             onChange={(value) => {
               setStartDate(value);
-              setEndDate(value);
             }}
             value={startDate}
           />
@@ -134,7 +138,6 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             }}
           >
             <TimePicker
-              minTime={startDate}
               slotProps={{
                 textField: { size: "small" },
                 openPickerButton: {
@@ -146,26 +149,15 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               }}
               value={endDate}
               onChange={(value) => {
-                if (
-                  value &&
-                  dayjs.utc(value).format("hh:mm") === "12:00" &&
-                  value.diff(startDate, "minutes") < 0
-                ) {
-                  setEndDate(dayjs.utc(value.format("YYYY-MM-DDT23:59:59Z")));
-                } else {
-                  setEndDate(value);
-                }
+                setEndDate(
+                  hoursConverter(value || dayjs.utc(), value || dayjs.utc())
+                );
               }}
             />
           </Box>
 
           <Box
             sx={{
-              outline: endDate
-                ? endDate.diff(startDate, "minutes") < 0
-                  ? "solid #ff335f 1px"
-                  : null
-                : null,
               textAlign: "center",
               minWidth: "56px",
               width: "56px",
@@ -173,9 +165,12 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               pl: "10px",
             }}
           >
-            {endDate?.diff(startDate, "minutes")
-              ? (endDate?.diff(startDate, "minutes") / 60).toFixed(1)
-              : 0}
+            {(
+              hoursConverter(
+                startDate || dayjs.utc(),
+                endDate || dayjs.utc()
+              ).diff(startDate, "minutes") / 60
+            ).toFixed(1)}
           </Box>
           <FormGroup
             sx={{ minWidth: "100px", mr: "5px" }}
@@ -249,11 +244,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             label="Комментарий"
             variant="standard"
           />
-          <Button
-            disabled={endDate ? endDate?.diff(startDate, "minutes") < 0 : false}
-            sx={{ minWidth: 102, ml: 1, mr: "5px" }}
-            type="submit"
-          >
+          <Button sx={{ minWidth: 102, ml: 1, mr: "5px" }} type="submit">
             Сохранить
           </Button>
         </Stack>

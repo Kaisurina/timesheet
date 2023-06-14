@@ -12,6 +12,7 @@ const Accounting = lazy(() => import("./accounting"));
 const Auth = lazy(() => import("./auth"));
 const Employees = lazy(() => import("./employees"));
 const Teams = lazy(() => import("./teams"));
+const Trainings = lazy(() => import("./trainings"));
 
 export const Routing = () => {
   const user = useAppSelector((state: { user: IUsersState }) => state.user);
@@ -27,6 +28,7 @@ export const Routing = () => {
               <Route path="/operators" element={<Operators></Operators>} />
               <Route path="/employees" element={<Employees></Employees>} />
               <Route path="/teams" element={<Teams></Teams>} />
+              <Route path="/trainings" element={<Trainings></Trainings>} />
               <Route path="/:id" element={<Timesheet></Timesheet>} />
             </>
           ) : (

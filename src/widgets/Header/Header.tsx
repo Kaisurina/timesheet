@@ -43,6 +43,11 @@ const pages = [
     link: "teams",
     access: ["SUPERVISOR", "TEAMLEAD"],
   },
+  {
+    name: "Тренинги",
+    link: "trainings",
+    access: ["SUPERVISOR", "TEAMLEAD", "USER"],
+  },
 ];
 const settings = ["Выйти"];
 
@@ -52,11 +57,12 @@ export const Header = () => {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  if (!user.role) {
+  if (!user.token) {
     return null;
   }
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    console.log(event.currentTarget);
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {

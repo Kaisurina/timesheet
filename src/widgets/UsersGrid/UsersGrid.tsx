@@ -4,10 +4,17 @@ import { UserCard } from "entities/user/ui";
 import { UserCardAdd } from "entities/user/ui";
 import { useAppSelector } from "shared/libs/redux";
 
-export const UsersGrid = ({ value }: any) => {
+interface UsersGridProps {
+  dates: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export const UsersGrid = ({ dates }: UsersGridProps) => {
   const user = useAppSelector((state) => state.user);
   const { data } = teamApi.useGetTeamByUserQuery({
-    ...value,
+    ...dates,
     teamleaderId: user.userId,
   });
   return (
@@ -15,7 +22,7 @@ export const UsersGrid = ({ value }: any) => {
       {data &&
         data.map((card) => [
           <Grid key={card.user.userId} item>
-            <UserCard card={card} value={value} teamleaderId={user.userId} />
+            <UserCard card={card} dates={dates} teamleaderId={user.userId} />
           </Grid>,
         ])}
       <Grid item>
