@@ -55,7 +55,7 @@ export const withTheme = (Component: React.ComponentType) => () => {
                 // disabled: "#f56b6b99",
                 primary: "#202020",
                 secondary: "#595959",
-                disabled: "#a6a6a6",
+                disabled: "#747474",
               },
             }
           : {

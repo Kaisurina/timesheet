@@ -38,6 +38,7 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
   return (
     <Card>
       <CardActionArea
+        component="div"
         sx={{ position: "relative" }}
         onClick={() => {
           handleClickOpen();
@@ -63,6 +64,7 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
             {card.user.fullName}
           </Typography>
           <IconButton
+            size="small"
             sx={{ position: "absolute", right: 0, top: 0 }}
             onClick={(e) => {
               e.stopPropagation();

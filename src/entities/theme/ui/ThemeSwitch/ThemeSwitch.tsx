@@ -55,7 +55,6 @@ const ThemeSwitch = () => {
   const dispatch = useAppDispatch();
   return (
     <MaterialUISwitch
-      sx={{ mr: 2 }}
       checked={mode.mode === "dark" ? true : false}
       onChange={() => dispatch(themeSwitch())}
     />
