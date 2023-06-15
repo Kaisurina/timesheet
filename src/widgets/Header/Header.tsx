@@ -218,15 +218,19 @@ export const Header = () => {
 
               <Box sx={{ minWidth: 70 }} display="block">
                 <Typography
-                  color={"text.disabled"}
                   component="span"
                   variant="caption"
-                  sx={{}}
+                  sx={{
+                    color: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "text.disabled"
+                        : "#fff6f8e1",
+                  }}
                 >
-                  Привет!
+                  Привет,
                 </Typography>
                 <Typography variant="subtitle2" sx={{ mt: "-5px" }}>
-                  {user.fullName.split(" ")[1]}
+                  {user.fullName.split(" ")[1]}!
                 </Typography>
               </Box>
               <Tooltip title="Open settings">
