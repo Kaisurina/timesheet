@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import CustomFooter from "./TableFooter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import {
   DataGrid,
   GridColDef,
@@ -18,7 +19,14 @@ import { PositionSelect } from "../PositionSelect/PositionSelect";
 import { IUsersState } from "entities/user/model";
 import { hoursConverter } from "shared/libs/hooks/hoursConverter";
 
+declare module "@mui/x-data-grid" {
+  interface FooterPropsOverrides {
+    user: IUsersState;
+  }
+}
+
 type TableProps = {
+  loading: boolean;
   data: ITimesheetRecord[] | undefined;
   user: IUsersState;
   density?: "compact" | "standard" | "comfortable";
@@ -28,41 +36,16 @@ type ParamsProp = {
   params: GridRenderCellParams;
 };
 
-declare module "@mui/x-data-grid" {
-  interface FooterPropsOverrides {
-    user: IUsersState;
-  }
-}
-
 const TableDeleteIcon = ({ params }: ParamsProp) => {
   const [deletePost] = recordsApi.useDeleteRecordMutation();
   return (
     <IconButton
       onClick={() => {
-        params.api.updateRows([{ id: params.id, _action: "delete" }]);
         deletePost(params.id as string);
       }}
     >
       <DeleteIcon />
     </IconButton>
-  );
-};
-const TableCheckbox = ({ params }: ParamsProp) => {
-  const [updatePost] = recordsApi.useUpdateRecordMutation();
-  return (
-    <Checkbox
-      size="small"
-      checked={params.value}
-      onChange={() => {
-        params.api.updateRows([
-          {
-            id: params.id,
-            isConfirmed: !params.value,
-          },
-        ]);
-        updatePost({ ...params.row, isConfirmed: !params.value });
-      }}
-    />
   );
 };
 
@@ -75,7 +58,7 @@ const columns: GridColDef[] = [
     editable: false,
     disableColumnMenu: true,
     renderCell(params) {
-      return <TableCheckbox params={params} />;
+      return <Checkbox name="approve" size="small" checked={params.value} />;
     },
   },
   {
@@ -279,7 +262,9 @@ const columns: GridColDef[] = [
     flex: 1,
     editable: true,
     renderCell: (params) => (
-      <Box sx={{ color: "text.disabled" }}>{params.value}</Box>
+      <Tooltip enterDelay={700} followCursor title={params.value}>
+        <Box sx={{ color: "text.disabled" }}>{params.value}</Box>
+      </Tooltip>
     ),
   },
   {
@@ -294,18 +279,13 @@ const columns: GridColDef[] = [
   },
 ];
 
-export const Table = ({ data, density, user }: TableProps) => {
-  const [updatePost] = recordsApi.useUpdateRecordMutation();
+export const Table = ({ data, density, user, loading }: TableProps) => {
+  const [updatePost, result] = recordsApi.useUpdateRecordMutation();
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    console.log(
-      dayjs.utc(newRow.endDate).isValid() &&
-        dayjs.utc(newRow.startDate).isValid()
-    );
     if (
       dayjs.utc(newRow.endDate).isValid() &&
       dayjs.utc(newRow.startDate).isValid()
     ) {
-      console.log("netut");
       newRow = {
         ...newRow,
         endDate: hoursConverter(newRow.startDate, newRow.endDate),
@@ -313,20 +293,27 @@ export const Table = ({ data, density, user }: TableProps) => {
       updatePost(newRow as ITimesheetRecord);
       return newRow;
     }
-    console.log(oldRow);
     return oldRow;
+  };
+  const processRowApprove = (params: any, event: any) => {
+    if (event.target.name === "approve") {
+      updatePost({ ...params.row, isConfirmed: !params.value });
+    }
   };
   const handleProcessRowUpdateError = (error: Error) => {
     console.log(error);
   };
   return (
     <DataGrid
+      onCellClick={processRowApprove}
+      loading={loading || result.isLoading}
       slots={{
         footer: CustomFooter,
         noRowsOverlay: () => null,
       }}
       slotProps={{ footer: { user: user } }}
       sx={{
+        minHeight: 100,
         "& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator": {
           display: "none",
         },
@@ -351,7 +338,7 @@ export const Table = ({ data, density, user }: TableProps) => {
       onProcessRowUpdateError={handleProcessRowUpdateError}
       initialState={{
         sorting: {
-          sortModel: [{ field: "startDate", sort: "asc" }],
+          sortModel: [{ field: "startDate", sort: "desc" }],
         },
         pagination: { paginationModel: { pageSize: 10 } },
       }}

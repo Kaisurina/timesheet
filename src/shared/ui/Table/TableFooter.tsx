@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import CustomPagination from "./TablePagination";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { PositionSelect } from "../PositionSelect/PositionSelect";
@@ -28,7 +29,16 @@ interface CustomFooterProps {
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
   const { expand, ...other } = props;
-  return <IconButton {...other} />;
+  return (
+    <Tooltip
+      enterDelay={0}
+      title={
+        expand ? "Закрыть меню создания записи" : "Открыть меню создания записи"
+      }
+    >
+      <IconButton {...other} />
+    </Tooltip>
+  );
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
   marginLeft: "auto",
@@ -83,6 +93,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
       >
         <ExpandMoreIcon />
       </ExpandMore>
+
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Stack
           onSubmit={handleSubmit}
@@ -111,7 +122,11 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               width: "54px",
               py: 1,
             }}
-          ></Box>
+          >
+            <Tooltip placement="top" title="Не забудь нажать ДОБАВИТЬ">
+              <ErrorOutlineIcon sx={{ ml: 1 }} />
+            </Tooltip>
+          </Box>
           <DateTimePicker
             slotProps={{
               textField: { size: "small" },
@@ -155,7 +170,6 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
               }}
             />
           </Box>
-
           <Box
             sx={{
               textAlign: "center",
@@ -245,7 +259,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             variant="standard"
           />
           <Button sx={{ minWidth: 102, ml: 1, mr: "5px" }} type="submit">
-            Сохранить
+            Добавить
           </Button>
         </Stack>
       </Collapse>

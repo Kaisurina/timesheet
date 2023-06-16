@@ -22,10 +22,11 @@ interface UserCardProps {
 }
 
 export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
-  const { data } = recordsApi.useGetRecordsByUserQuery({
-    ...dates,
-    userId: card.user.userId,
-  });
+  const { data, isFetching, isLoading, isUninitialized } =
+    recordsApi.useGetRecordsByUserQuery({
+      ...dates,
+      userId: card.user.userId,
+    });
   const [removeUser] = teamApi.useRemoveUserFromTeamMutation();
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
@@ -134,7 +135,11 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
         <Typography textAlign="center" variant="h6">
           {card.user.fullName}
         </Typography>
-        <Table user={card.user} data={data} />
+        <Table
+          loading={isFetching || isLoading || isUninitialized}
+          user={card.user}
+          data={data}
+        />
       </Dialog>
     </Card>
   );

@@ -62,7 +62,7 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
             disablePortal
             id="team-users-add"
             options={data || []}
-            getOptionLabel={(option) => option.fullName}
+            getOptionLabel={(option) => `${option.fullName}-${option.username}`}
             size="small"
             renderInput={(params) => (
               <TextField

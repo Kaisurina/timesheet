@@ -4,6 +4,8 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Skeleton from "@mui/material/Skeleton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import { usersApi } from "entities/user/api/userService";
 
 type PositionSelectProps = {
@@ -30,14 +32,22 @@ export const PositionSelect = ({
         label="Позиция"
         onChange={(e) => setPosition && setPosition(e.target.value)}
       >
-        {positions.data?.map((value) => (
-          <MenuItem key={value.id} value={value.id}>
-            {value.positionName}
+        {positions.data?.map((position) => (
+          <MenuItem key={position.id} value={position.id}>
+            <Tooltip
+              enterDelay={700}
+              followCursor
+              title={position.positionName}
+            >
+              <Typography noWrap textOverflow="ellipsis">
+                {position.positionName}
+              </Typography>
+            </Tooltip>
           </MenuItem>
         ))}
       </Select>
     </FormControl>
   ) : (
-    <Skeleton variant="rectangular" width={539} height={45} />
+    <Skeleton height={32} width={200}></Skeleton>
   );
 };
