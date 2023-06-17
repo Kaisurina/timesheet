@@ -36,23 +36,15 @@ export const withTheme = (Component: React.ComponentType) => () => {
           ? {
               primary: {
                 main: "#ff335f",
-                // main: "#ffffff",
               },
               background: {
-                // default: "#f7c1b5a9",
-                // paper: "#ffffff",
                 default: "#f2f2f2",
                 paper: "#ffffff",
-                // default: "#ffffff",
-                // paper: "#c2c2c2",
               },
               action: {
                 active: "#595959",
               },
               text: {
-                // primary: "#f51634",
-                // secondary: "#ff6e6e",
-                // disabled: "#f56b6b99",
                 primary: "#202020",
                 secondary: "#595959",
                 disabled: "#747474",

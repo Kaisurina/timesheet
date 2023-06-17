@@ -14,6 +14,8 @@ import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import CheckIcon from "@mui/icons-material/Check";
+import Tooltip from "@mui/material/Tooltip";
+import Chip from "@mui/material/Chip";
 import { usersApi } from "entities/user/api/userService";
 import { IUsersState } from "entities/user/model";
 import { teamApi } from "entities/team/api/teamService";
@@ -23,8 +25,13 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
   const [addUser] = teamApi.useAddUserToTeamMutation();
   const [open, setOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<IUsersState[]>([]);
+  const isFullNameRepeated = (data: IUsersState[], fullName: string) => {
+    const count = data.filter((option) => option.fullName === fullName).length;
+    return count > 1;
+  };
+
   return (
-    <Card>
+    <Card sx={{ borderRadius: "15px" }} variant="outlined">
       <SwipeableDrawer
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
@@ -62,7 +69,32 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
             disablePortal
             id="team-users-add"
             options={data || []}
-            getOptionLabel={(option) => `${option.fullName}-${option.username}`}
+            renderOption={(props, option) => (
+              <li key={option.username} {...props}>
+                {data && isFullNameRepeated(data, option.fullName) ? (
+                  <Tooltip title={option.username}>
+                    <span>{option.fullName}</span>
+                  </Tooltip>
+                ) : (
+                  `${option.fullName}`
+                )}
+              </li>
+            )}
+            filterOptions={(options, { inputValue }) => {
+              return options.filter((option) =>
+                option.fullName.toLowerCase().includes(inputValue.toLowerCase())
+              );
+            }}
+            getOptionLabel={(option) => option.username}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  size="small"
+                  label={option.fullName}
+                  {...getTagProps({ index })}
+                />
+              ))
+            }
             size="small"
             renderInput={(params) => (
               <TextField
@@ -94,8 +126,8 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
       <CardActionArea onClick={() => setOpen(true)}>
         <CardContent
           sx={{
-            height: "220px",
-            width: "234px",
+            height: "180px",
+            width: "282px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

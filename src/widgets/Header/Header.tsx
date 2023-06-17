@@ -25,16 +25,11 @@ const pages = [
     link: "timesheet",
     access: ["SUPERVISOR", "USER", "TEAMLEAD"],
   },
-  // {
-  //   name: "Отчётность",
-  //   link: "accounting",
-  //   access: ["SUPERVISOR", "TEAMLEAD"],
-  // },
-  // {
-  //   name: "Операторы",
-  //   link: "operators",
-  //   access: ["SUPERVISOR", "TEAMLEAD"],
-  // },
+  {
+    name: "Отчётность",
+    link: "accounting",
+    access: ["SUPERVISOR"],
+  },
   {
     name: "Сотрудники",
     link: "employees",

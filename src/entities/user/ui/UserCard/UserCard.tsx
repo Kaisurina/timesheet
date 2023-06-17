@@ -3,12 +3,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
-import CloseIcon from "@mui/icons-material/Close";
+import CancelTwoToneIcon from "@mui/icons-material/CancelTwoTone";
 import IconButton from "@mui/material/IconButton";
 import { Table } from "shared/ui";
 import { recordsApi } from "entities/record/api/recordService";
@@ -37,7 +35,7 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
   };
 
   return (
-    <Card>
+    <Card sx={{ borderRadius: "15px" }} variant="outlined">
       <CardActionArea
         component="div"
         sx={{ position: "relative" }}
@@ -47,8 +45,8 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
       >
         <CardContent
           sx={{
-            height: "220px",
-            width: "234px",
+            height: "180px",
+            width: "282px",
             p: 1,
             display: "flex",
             flexDirection: "column",
@@ -72,47 +70,138 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
               removeUser({ userId: card.user.userId, teamleaderId });
             }}
           >
-            <CloseIcon />
+            <CancelTwoToneIcon />
           </IconButton>
-          <List
-            sx={{
-              m: 0,
-              p: 0,
-            }}
+          <Stack
+            border={card.confirmed ? "1px solid#73db6ad8" : "1px solid #DBAE6A"}
+            borderRadius="5px"
+            p={0.5}
+            gap={0.5}
+            direction="row"
+            bgcolor={(theme) =>
+              theme.palette.mode === "dark" ? "#404040" : "background.default"
+            }
           >
-            <ListItem
-              sx={{
-                p: 0,
-                ".MuiListItemSecondaryAction-root": {
-                  right: 0,
-                },
-              }}
-              secondaryAction={
-                <Chip
-                  size="small"
-                  label={card.hours === 0 ? "0" : card.hours}
-                />
-              }
+            <Box
+              width={62}
+              p={0.5}
+              borderRadius="5px"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              bgcolor={"background.paper"}
             >
-              <ListItemText secondary="Всего часов" />
-            </ListItem>
-            <ListItem
-              sx={{
-                p: 0,
-                ".MuiListItemSecondaryAction-root": {
-                  right: 0,
-                },
-              }}
-              secondaryAction={
-                <Chip
-                  size="small"
-                  label={card.sideHours === 0 ? "0" : card.sideHours}
-                />
-              }
+              <Typography
+                mb={1}
+                lineHeight={1.1}
+                textAlign="center"
+                variant="body2"
+              >
+                Всего часов
+              </Typography>
+              <Typography
+                lineHeight={1}
+                textAlign="center"
+                fontWeight={900}
+                variant="h5"
+              >
+                {card.hours ? card.hours : "-"}
+              </Typography>
+            </Box>
+            <Box
+              width={62}
+              p={0.5}
+              borderRadius="5px"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              bgcolor={"background.paper"}
             >
-              <ListItemText secondary="Не своя позиция" />
-            </ListItem>
-          </List>
+              <Typography
+                mb={1}
+                lineHeight={1.1}
+                textAlign="center"
+                variant="body2"
+              >
+                Не своя позиция
+              </Typography>
+              <Typography
+                lineHeight={1}
+                textAlign="center"
+                fontWeight={900}
+                variant="h5"
+              >
+                {card.sideHours ? card.sideHours : "-"}
+              </Typography>
+            </Box>
+            <Box
+              width={62}
+              p={0.5}
+              borderRadius="5px"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              bgcolor={"background.paper"}
+            >
+              <Typography
+                mb={1}
+                lineHeight={1.1}
+                textAlign="center"
+                variant="body2"
+                color={card.confirmed ? "#73db6ad8" : "#DBAE6A"}
+              >
+                Нет визы
+              </Typography>
+              <Typography
+                lineHeight={1}
+                textAlign="center"
+                fontWeight={900}
+                variant="h5"
+                color={card.confirmed ? "#73db6ad8" : "#DBAE6A"}
+              >
+                {card.unconfirmedRecords ? card.unconfirmedRecords : "-"}
+              </Typography>
+            </Box>
+            <Box
+              width={62}
+              p={0.5}
+              borderRadius="5px"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              bgcolor={"background.paper"}
+            >
+              <Typography
+                noWrap
+                lineHeight={1.1}
+                textAlign="center"
+                variant="body2"
+              >
+                1.5x
+              </Typography>
+              <Typography
+                noWrap
+                mb={1}
+                lineHeight={1.1}
+                textAlign="center"
+                variant="body2"
+              >
+                2x
+              </Typography>
+              <Typography
+                lineHeight={1}
+                textAlign="center"
+                fontWeight={900}
+                variant="h5"
+              >
+                {card.overworkedHours ? card.overworkedHours : "-"}
+              </Typography>
+            </Box>
+          </Stack>
         </CardContent>
       </CardActionArea>
       <Dialog

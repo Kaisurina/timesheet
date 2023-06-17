@@ -20,6 +20,15 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Users"],
     }),
+    getExcel: builder.mutation<Array<IUsersState>, any>({
+      query: (user) => ({
+        url: `/users/excel`,
+        method: "POST",
+        body: {
+          ...user,
+        },
+      }),
+    }),
     editUser: builder.mutation<Array<IUsersState>, any>({
       query: (user) => ({
         url: `/users/edit/${user.userId}`,
@@ -72,6 +81,7 @@ export const usersApi = baseApi.injectEndpoints({
 export const {
   useGetAllUsersQuery,
   useGetAllUsersPositionsQuery,
+  useGetExcelMutation,
   useCreateNewUserMutation,
   useEditUserMutation,
   useEditPositionMutation,

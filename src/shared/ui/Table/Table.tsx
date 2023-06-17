@@ -6,12 +6,7 @@ import CustomFooter from "./TableFooter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridRowModel,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowModel } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { recordsApi } from "entities/record/api/recordService";
 import { ITimesheetRecord } from "entities/record/model";
@@ -30,23 +25,6 @@ type TableProps = {
   data: ITimesheetRecord[] | undefined;
   user: IUsersState;
   density?: "compact" | "standard" | "comfortable";
-};
-
-type ParamsProp = {
-  params: GridRenderCellParams;
-};
-
-const TableDeleteIcon = ({ params }: ParamsProp) => {
-  const [deletePost] = recordsApi.useDeleteRecordMutation();
-  return (
-    <IconButton
-      onClick={() => {
-        deletePost(params.id as string);
-      }}
-    >
-      <DeleteIcon />
-    </IconButton>
-  );
 };
 
 const columns: GridColDef[] = [
@@ -273,14 +251,19 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     renderHeader: () => null,
-    renderCell: (params) => {
-      return <TableDeleteIcon params={params} />;
+    renderCell: () => {
+      return (
+        <IconButton name="delete">
+          <DeleteIcon sx={{ zIndex: -1 }} />
+        </IconButton>
+      );
     },
   },
 ];
 
 export const Table = ({ data, density, user, loading }: TableProps) => {
-  const [updatePost, result] = recordsApi.useUpdateRecordMutation();
+  const [updatePost, updateResult] = recordsApi.useUpdateRecordMutation();
+  const [deletePost, deleteResult] = recordsApi.useDeleteRecordMutation();
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
     if (
       dayjs.utc(newRow.endDate).isValid() &&
@@ -295,7 +278,10 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
     }
     return oldRow;
   };
-  const processRowApprove = (params: any, event: any) => {
+  const processRowApproveOrDelete = (params: any, event: any) => {
+    if (event.target.name === "delete") {
+      deletePost(params.row.id);
+    }
     if (event.target.name === "approve") {
       updatePost({ ...params.row, isConfirmed: !params.value });
     }
@@ -305,8 +291,8 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
   };
   return (
     <DataGrid
-      onCellClick={processRowApprove}
-      loading={loading || result.isLoading}
+      onCellClick={processRowApproveOrDelete}
+      loading={loading || updateResult.isLoading || deleteResult.isLoading}
       slots={{
         footer: CustomFooter,
         noRowsOverlay: () => null,
