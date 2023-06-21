@@ -4,16 +4,30 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
+import CircularProgress from "@mui/material/CircularProgress";
 import { PositionsList, UsersList } from "widgets";
 import { usersApi } from "entities/user/api/userService";
 
 const Employees = () => {
   const users = usersApi.useGetAllUsersQuery();
-  const positions = usersApi.useGetAllUsersPositionsQuery("");
+  const positions = usersApi.useGetAllUsersPositionsQuery();
   const [value, setValue] = useState(0);
   const [page, setPage] = useState(1);
   if (users.isLoading || positions.isLoading) {
-    return <div>Загрузка</div>;
+    return (
+      <div>
+        <CircularProgress
+          sx={{
+            position: "absolute",
+            top: "33%",
+            left: "50%",
+            ml: "-3rem",
+            mt: "-3rem",
+          }}
+          size={"6rem"}
+        />
+      </div>
+    );
   }
   return (
     <>

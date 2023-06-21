@@ -3,13 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAppSelector } from "shared/libs/redux";
 import { ruRU } from "@mui/x-data-grid";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import "dayjs/locale/ru";
-import utc from "dayjs/plugin/utc";
-import dayjs from "dayjs";
 
-dayjs.extend(utc);
 declare module "@mui/material/styles" {
   interface BreakpointOverrides {
     mobile: true;
@@ -60,11 +54,9 @@ export const withTheme = (Component: React.ComponentType) => () => {
     ruRU
   );
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Component />
-      </ThemeProvider>
-    </LocalizationProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Component />
+    </ThemeProvider>
   );
 };

@@ -1,7 +1,7 @@
-import Box from "@mui/material/Box";
+import { TrainingsGrid } from "widgets";
 
 const Trainings = () => {
-  return <Box>Trainings</Box>;
+  return <TrainingsGrid />;
 };
 
 export default Trainings;

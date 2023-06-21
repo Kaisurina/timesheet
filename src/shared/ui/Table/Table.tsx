@@ -13,17 +13,18 @@ import { ITimesheetRecord } from "entities/record/model";
 import { PositionSelect } from "../PositionSelect/PositionSelect";
 import { IUsersState } from "entities/user/model";
 import { hoursConverter } from "shared/libs/hooks/hoursConverter";
+import { useAppSelector } from "shared/libs/redux";
 
 declare module "@mui/x-data-grid" {
   interface FooterPropsOverrides {
-    user: IUsersState;
+    user: IUsersState | null;
   }
 }
 
 type TableProps = {
   loading: boolean;
-  data: ITimesheetRecord[] | undefined;
-  user: IUsersState;
+  data: ITimesheetRecord[];
+  user: IUsersState | null;
   density?: "compact" | "standard" | "comfortable";
 };
 
@@ -35,6 +36,8 @@ const columns: GridColDef[] = [
     width: 50,
     editable: false,
     disableColumnMenu: true,
+    cellClassName: (params) =>
+      params.row.isConfirmed ? "" : "MuiDataGrid-cell--editable",
     renderCell(params) {
       return <Checkbox name="approve" size="small" checked={params.value} />;
     },
@@ -127,16 +130,10 @@ const columns: GridColDef[] = [
   },
   {
     renderCell: (params) => (
-      <Box sx={{ color: "text.disabled" }}>
-        {dayjs.utc(params.row.endDate).diff(params.row.startDate, "minutes")
-          ? (
-              dayjs
-                .utc(params.row.endDate)
-                .diff(params.row.startDate, "minutes") / 60
-            ).toFixed(1)
-          : 0}
-      </Box>
+      <Box sx={{ color: "text.disabled" }}>{params.value}</Box>
     ),
+    cellClassName: (params) =>
+      params.row.isConfirmed ? "" : "MuiDataGrid-cell--editable",
     sortable: false,
     field: "hours",
     headerName: "Часы",
@@ -246,15 +243,21 @@ const columns: GridColDef[] = [
     ),
   },
   {
+    cellClassName: (params) =>
+      params.row.isConfirmed ? "" : "MuiDataGrid-cell--editable",
     field: "delete",
     width: 50,
     sortable: false,
     disableColumnMenu: true,
     renderHeader: () => null,
-    renderCell: () => {
+    renderCell: (params) => {
       return (
-        <IconButton name="delete">
-          <DeleteIcon sx={{ zIndex: -1 }} />
+        <IconButton
+          size="large"
+          disabled={params.row.isConfirmed}
+          name="delete"
+        >
+          <DeleteIcon />
         </IconButton>
       );
     },
@@ -262,6 +265,7 @@ const columns: GridColDef[] = [
 ];
 
 export const Table = ({ data, density, user, loading }: TableProps) => {
+  const currentUser = useAppSelector((state) => state.user);
   const [updatePost, updateResult] = recordsApi.useUpdateRecordMutation();
   const [deletePost, deleteResult] = recordsApi.useDeleteRecordMutation();
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
@@ -279,11 +283,12 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
     return oldRow;
   };
   const processRowApproveOrDelete = (params: any, event: any) => {
-    if (event.target.name === "delete") {
-      deletePost(params.row.id);
+    if (params.field === "delete") {
+      !params.row.isConfirmed && deletePost(params.row.id);
     }
     if (event.target.name === "approve") {
-      updatePost({ ...params.row, isConfirmed: !params.value });
+      (currentUser.role === "SUPERVISOR" || currentUser.role === "TEAMLEAD") &&
+        updatePost({ ...params.row, isConfirmed: !params.value });
     }
   };
   const handleProcessRowUpdateError = (error: Error) => {
@@ -299,11 +304,18 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
       }}
       slotProps={{ footer: { user: user } }}
       sx={{
-        minHeight: 100,
+        bgcolor: "background.paper",
         "& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator": {
           display: "none",
         },
-        "& .MuiDataGrid-cell:last-child": { padding: "0 5px" },
+        "& .MuiDataGrid-cell": {
+          bgcolor: (theme) =>
+            theme.palette.mode === "dark" ? "#376331" : "rgb(217 243 190)",
+        },
+        "& .MuiDataGrid-cell--editable": {
+          bgcolor: "background.paper",
+        },
+        "& .MuiDataGrid-cell:last-child": { p: 0 },
         "& .MuiDataGrid-row--lastVisible .MuiDataGrid-cell": {
           borderBottomColor: (theme) =>
             theme.palette.mode === "dark"
@@ -311,11 +323,11 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
               : " rgba(224, 224, 224, 1) !important",
         },
         "& .MuiDataGrid-virtualScroller": {
-          height: data?.length ? null : "0px",
+          height: data?.length ? null : "0px", // убираем norowsoverlay полностью
         },
       }}
       density={density ? density : "standard"}
-      rows={data || []}
+      rows={data}
       columns={columns}
       isCellEditable={(params) => {
         return !params.row.isConfirmed;

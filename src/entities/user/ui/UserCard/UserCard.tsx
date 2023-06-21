@@ -1,47 +1,34 @@
-import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import Dialog from "@mui/material/Dialog";
 import CancelTwoToneIcon from "@mui/icons-material/CancelTwoTone";
 import IconButton from "@mui/material/IconButton";
-import { Table } from "shared/ui";
-import { recordsApi } from "entities/record/api/recordService";
 import { teamApi } from "entities/team/api/teamService";
 import { ITeam } from "entities/team/model";
+import { IUsersState } from "entities/user/model";
 
 interface UserCardProps {
   card: ITeam;
-  dates: { startDate: string; endDate: string };
   teamleaderId: string;
+  handleClickOpen: (user: IUsersState) => void;
 }
 
-export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
-  const { data, isFetching, isLoading, isUninitialized } =
-    recordsApi.useGetRecordsByUserQuery({
-      ...dates,
-      userId: card.user.userId,
-    });
+export const UserCard = ({
+  card,
+  teamleaderId,
+  handleClickOpen,
+}: UserCardProps) => {
   const [removeUser] = teamApi.useRemoveUserFromTeamMutation();
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <Card sx={{ borderRadius: "15px" }} variant="outlined">
       <CardActionArea
         component="div"
         sx={{ position: "relative" }}
-        onClick={() => {
-          handleClickOpen();
-        }}
+        onClick={() => handleClickOpen(card.user)}
       >
         <CardContent
           sx={{
@@ -204,32 +191,6 @@ export const UserCard = ({ card, dates, teamleaderId }: UserCardProps) => {
           </Stack>
         </CardContent>
       </CardActionArea>
-      <Dialog
-        sx={{
-          p: 1,
-          "& .MuiDataGrid-virtualScroller": {
-            overflowY: "auto !important",
-            "::-webkit-scrollbar": {
-              display: "none",
-            },
-          },
-        }}
-        maxWidth="xl"
-        fullWidth
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="user-dialog-title"
-        aria-describedby="user-dialog-description"
-      >
-        <Typography textAlign="center" variant="h6">
-          {card.user.fullName}
-        </Typography>
-        <Table
-          loading={isFetching || isLoading || isUninitialized}
-          user={card.user}
-          data={data}
-        />
-      </Dialog>
     </Card>
   );
 };

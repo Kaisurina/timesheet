@@ -1,18 +1,15 @@
-import { lazy } from "react";
-import { Route, Routes } from "react-router-dom";
+import Employees from "./employees";
+import Accounting from "./accounting";
+import Faq from "./faq";
+import Auth from "./auth";
+import Teams from "./teams";
+import Timesheet from "./timesheet";
+import Trainings from "./trainings";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { Route, Routes } from "react-router-dom";
 import { IUsersState } from "entities/user/model";
 import { useAppSelector } from "shared/libs/redux";
-
-const Timesheet = lazy(() => import("./timesheet"));
-const Operators = lazy(() => import("./operators"));
-const Faq = lazy(() => import("./faq"));
-const Accounting = lazy(() => import("./accounting"));
-const Auth = lazy(() => import("./auth"));
-const Employees = lazy(() => import("./employees"));
-const Teams = lazy(() => import("./teams"));
-const Trainings = lazy(() => import("./trainings"));
 
 export const Routing = () => {
   const user = useAppSelector((state: { user: IUsersState }) => state.user);
@@ -24,9 +21,15 @@ export const Routing = () => {
           {Boolean(user.token) ? (
             <>
               <Route path="/" element={<Faq></Faq>} />
-              <Route path="/accounting" element={<Accounting></Accounting>} />
-              <Route path="/operators" element={<Operators></Operators>} />
-              <Route path="/employees" element={<Employees></Employees>} />
+              {user.role === "SUPERVISOR" && (
+                <>
+                  <Route
+                    path="/accounting"
+                    element={<Accounting></Accounting>}
+                  />
+                  <Route path="/employees" element={<Employees></Employees>} />
+                </>
+              )}
               <Route path="/teams" element={<Teams></Teams>} />
               <Route path="/trainings" element={<Trainings></Trainings>} />
               <Route path="/:id" element={<Timesheet></Timesheet>} />

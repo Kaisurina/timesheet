@@ -3,11 +3,11 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { MonthPicker } from "shared/ui";
 import dayjs, { Dayjs } from "dayjs";
-import { usersApi } from "entities/user/api/userService";
+import { recordsApi } from "entities/record/api/recordService";
 
 const Accounting = () => {
   const [date, setDate] = useState<Dayjs | null>(dayjs.utc());
-  const [downloadFile, result] = usersApi.useGetExcelMutation();
+  const [downloadFile] = recordsApi.useGetExcelMutation();
   return (
     <Stack gap={10} direction="row">
       <MonthPicker value={date} setValue={setDate} />
@@ -17,7 +17,6 @@ const Accounting = () => {
             startDate: `${dayjs(date).format("YYYY-MM")}-01`,
             endDate: `${dayjs(date).add(1, "month").format("YYYY-MM")}-01`,
           });
-          console.log(result);
         }}
       >
         Скачать

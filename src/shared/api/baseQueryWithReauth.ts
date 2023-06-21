@@ -10,7 +10,7 @@ import {
 import { baseQuery } from "./baseQuery";
 import { invalidateAccessToken } from "./invalidateTokenEvent";
 
-const AUTH_ERROR_CODES = new Set([401]);
+const AUTH_ERROR_CODES = new Set([403]);
 
 export async function baseQueryWithReauth(
   args: string | FetchArgs,

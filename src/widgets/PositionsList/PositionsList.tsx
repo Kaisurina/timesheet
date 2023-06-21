@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -11,7 +11,9 @@ interface PositionsListProps {
 
 export const PositionsList = ({ positions }: PositionsListProps) => {
   const [data, setData] = useState(positions);
-
+  useEffect(() => {
+    setData(positions);
+  }, [positions]);
   return (
     <Box>
       <Box

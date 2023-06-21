@@ -23,27 +23,27 @@ const pages = [
   {
     name: "Табель",
     link: "timesheet",
-    access: ["SUPERVISOR", "USER", "TEAMLEAD"],
+    access: ["SUPERVISOR", "USER", "TEAMLEAD", "MENTOR", "S4S"],
+  },
+  {
+    name: "Тренинги",
+    link: "trainings",
+    access: ["SUPERVISOR", "TEAMLEAD", "USER", "MENTOR", "S4S"],
+  },
+  {
+    name: "Моя Команда",
+    link: "teams",
+    access: ["SUPERVISOR", "TEAMLEAD", "MENTOR"],
+  },
+  {
+    name: "Сотрудники",
+    link: "employees",
+    access: ["SUPERVISOR", "S4S"],
   },
   {
     name: "Отчётность",
     link: "accounting",
     access: ["SUPERVISOR"],
-  },
-  {
-    name: "Сотрудники",
-    link: "employees",
-    access: ["SUPERVISOR"],
-  },
-  {
-    name: "Моя Команда",
-    link: "teams",
-    access: ["SUPERVISOR", "TEAMLEAD"],
-  },
-  {
-    name: "Тренинги",
-    link: "trainings",
-    access: ["SUPERVISOR", "TEAMLEAD", "USER"],
   },
 ];
 

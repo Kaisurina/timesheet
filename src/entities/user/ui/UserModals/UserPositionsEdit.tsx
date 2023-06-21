@@ -16,8 +16,8 @@ type UserPositionsEditProps = {
   position: IPositionsState;
 };
 export const UserPositionsEdit = ({ position }: UserPositionsEditProps) => {
-  const [open, setOpen] = useState(false);
   const [editPosition] = useEditPositionMutation();
+  const [open, setOpen] = useState(false);
   const labelId = `checkbox-list-secondary-label-${position.id}`;
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

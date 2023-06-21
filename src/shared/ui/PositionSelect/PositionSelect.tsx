@@ -19,7 +19,7 @@ export const PositionSelect = ({
   setPosition,
   disabled,
 }: PositionSelectProps) => {
-  const positions = usersApi.useGetAllUsersPositionsQuery("");
+  const positions = usersApi.useGetAllUsersPositionsQuery();
   return positions.data ? (
     <FormControl required variant="standard" fullWidth>
       <InputLabel id="position-select-label">Позиция</InputLabel>

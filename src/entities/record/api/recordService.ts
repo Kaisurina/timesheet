@@ -20,6 +20,7 @@ export const recordsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Record"],
     }),
+
     createRecord: builder.mutation<ITimesheetRecord, ITimesheetRecord>({
       query: (record) => ({
         url: `/timesheet_records/create_record`,
@@ -28,7 +29,7 @@ export const recordsApi = baseApi.injectEndpoints({
           ...record,
         },
       }),
-      invalidatesTags: ["Record", "Team"],
+      invalidatesTags: ["Record"],
     }),
     updateRecord: builder.mutation<Array<ITimesheetRecord>, ITimesheetRecord>({
       query: (record) => ({
@@ -45,7 +46,22 @@ export const recordsApi = baseApi.injectEndpoints({
         url: `/timesheet_records/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Record", "Team"],
+      invalidatesTags: ["Record"],
+    }),
+    getExcel: builder.mutation<
+      void,
+      {
+        startDate: string;
+        endDate: string;
+      }
+    >({
+      query: (dates) => ({
+        url: `/timesheet_records/accounting`,
+        method: "POST",
+        body: {
+          ...dates,
+        },
+      }),
     }),
   }),
 });
@@ -54,5 +70,6 @@ export const {
   useGetRecordsByUserQuery,
   useUpdateRecordMutation,
   useCreateRecordMutation,
+  useGetExcelMutation,
   useDeleteRecordMutation,
 } = recordsApi;

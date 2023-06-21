@@ -16,13 +16,14 @@ import Button from "@mui/material/Button";
 import CheckIcon from "@mui/icons-material/Check";
 import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
+import CircularProgress from "@mui/material/CircularProgress";
 import { usersApi } from "entities/user/api/userService";
 import { IUsersState } from "entities/user/model";
 import { teamApi } from "entities/team/api/teamService";
 
 export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
   const { data } = usersApi.useGetAllUsersQuery();
-  const [addUser] = teamApi.useAddUserToTeamMutation();
+  const [addUser, addUserResult] = teamApi.useAddUserToTeamMutation();
   const [open, setOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<IUsersState[]>([]);
   const isFullNameRepeated = (data: IUsersState[], fullName: string) => {
@@ -113,13 +114,18 @@ export const UserCardAdd = ({ teamleaderId }: { teamleaderId: string }) => {
             type="submit"
             color="success"
             variant="outlined"
-            onClick={() =>
+            onClick={() => {
               selectedUsers.map((user) =>
                 addUser({ userId: user.userId, teamleaderId: teamleaderId })
-              )
-            }
+              );
+              setSelectedUsers([]);
+            }}
           >
-            <CheckIcon />
+            {addUserResult.isLoading ? (
+              <CircularProgress size={24} />
+            ) : (
+              <CheckIcon />
+            )}
           </Button>
         </Box>
       </SwipeableDrawer>

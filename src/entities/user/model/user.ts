@@ -14,7 +14,7 @@ export const loginThunk = createAsyncThunk(
       method: `POST`,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: data.get("email"),
+        email: data.get("email"),
         password: data.get("password"),
       }),
     });
@@ -97,14 +97,14 @@ export const userSlice = createSlice({
       if (action.payload.hasOwnProperty("errorCode")) {
         state.loading = "error";
       } else {
-        state.username = action.payload.second.username;
-        state.positionId = action.payload.second.positionId;
-        state.updated = action.payload.second.updated;
-        state.fullName = action.payload.second.fullName;
-        state.token = action.payload.first.accessToken;
-        state.userId = action.payload.second.userId;
-        state.role = action.payload.second.role;
-        state.contract = action.payload.second.contract;
+        state.username = action.payload.user.username;
+        state.positionId = action.payload.user.positionId;
+        state.updated = action.payload.user.updated;
+        state.fullName = action.payload.user.fullName;
+        state.token = action.payload.token;
+        state.userId = action.payload.user.userId;
+        state.role = action.payload.user.role;
+        state.contract = action.payload.user.contract;
         state.loading = "finished";
       }
     });

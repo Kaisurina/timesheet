@@ -24,7 +24,7 @@ interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 interface CustomFooterProps {
-  user: IUsersState;
+  user: IUsersState | null;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
@@ -51,27 +51,33 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
   const [expanded, setExpanded] = useState(false);
   const [is15x, setIs15x] = useState(false);
   const [is20x, setIs20x] = useState(false);
-  const [position, setPosition] = useState(user.positionId);
+  const [position, setPosition] = useState(user?.positionId || 1);
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs.utc());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs.utc());
   const [create] = recordsApi.useCreateRecordMutation();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    setStartDate(startDate?.add(1, "day") as Dayjs);
-    setEndDate(endDate?.add(1, "day") as Dayjs);
-    create({
-      userId: user.userId,
-      positionId: position || 6,
-      updated: `${dayjs.utc()}`,
-      startDate: startDate,
-      endDate: hoursConverter(startDate || dayjs.utc(), endDate || dayjs.utc()),
-      isConfirmed: false,
-      isDeleted: false,
-      is15x: Boolean(data.get("is15x")),
-      is20x: Boolean(data.get("is20x")),
-      comment: String(data.get("comment")),
-    });
+    if (user) {
+      const data = new FormData(event.currentTarget);
+      setStartDate(startDate?.add(1, "day") as Dayjs);
+      setEndDate(endDate?.add(1, "day") as Dayjs);
+
+      create({
+        userId: user.userId,
+        positionId: position || 6,
+        updated: `${dayjs.utc()}`,
+        startDate: startDate,
+        endDate: hoursConverter(
+          startDate || dayjs.utc(),
+          endDate || dayjs.utc()
+        ),
+        isConfirmed: false,
+        isDeleted: false,
+        is15x: Boolean(data.get("is15x")),
+        is20x: Boolean(data.get("is20x")),
+        comment: String(data.get("comment")),
+      });
+    }
   };
   return (
     <Box sx={{ position: "relative" }}>
@@ -232,6 +238,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             />
           </Box>
           <TextField
+            type="search"
             fullWidth
             name="comment"
             size="small"

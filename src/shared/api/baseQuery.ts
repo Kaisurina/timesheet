@@ -19,7 +19,7 @@ export const baseQuery: BaseQueryFn<
     const { token } = (getState() as RootState).user;
 
     if (token) {
-      // headers.set("Authorization", `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     return headers;
