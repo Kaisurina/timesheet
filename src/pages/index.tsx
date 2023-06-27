@@ -21,7 +21,7 @@ export const Routing = () => {
           {Boolean(user.token) ? (
             <>
               <Route path="/" element={<Faq></Faq>} />
-              {user.role === "SUPERVISOR" && (
+              {(user.role === "SUPERVISOR" || user.role === "S4S") && (
                 <>
                   <Route
                     path="/accounting"

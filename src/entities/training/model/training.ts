@@ -9,7 +9,6 @@ export interface ITraining {
   mentor: IUsersState;
   participants: Array<IUsersState>;
   maxParticipants: number;
-  linkMeet: string;
   linkTelegram: string;
   level: number;
   group: string;

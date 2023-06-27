@@ -1,3 +1,4 @@
+import { IAccounting } from "./../model/record";
 import { ITimesheetRecord } from "../model";
 import { baseApi } from "shared/api";
 
@@ -29,7 +30,7 @@ export const recordsApi = baseApi.injectEndpoints({
           ...record,
         },
       }),
-      invalidatesTags: ["Record"],
+      invalidatesTags: ["Record", "Team"],
     }),
     updateRecord: builder.mutation<Array<ITimesheetRecord>, ITimesheetRecord>({
       query: (record) => ({
@@ -46,10 +47,10 @@ export const recordsApi = baseApi.injectEndpoints({
         url: `/timesheet_records/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Record"],
+      invalidatesTags: ["Record", "Team"],
     }),
-    getExcel: builder.mutation<
-      void,
+    getAccounting: builder.query<
+      Array<IAccounting>,
       {
         startDate: string;
         endDate: string;
@@ -63,6 +64,21 @@ export const recordsApi = baseApi.injectEndpoints({
         },
       }),
     }),
+    getExcel: builder.mutation<
+      void,
+      {
+        startDate: string;
+        endDate: string;
+      }
+    >({
+      query: (dates) => ({
+        url: `/timesheet_records/accounting/download`,
+        method: "GET",
+        // body: {
+        //   ...dates,
+        // },
+      }),
+    }),
   }),
 });
 
@@ -72,4 +88,5 @@ export const {
   useCreateRecordMutation,
   useGetExcelMutation,
   useDeleteRecordMutation,
+  useGetAccountingQuery,
 } = recordsApi;

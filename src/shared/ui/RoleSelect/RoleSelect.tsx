@@ -24,6 +24,7 @@ export const RoleSelect = ({ defaultRole = "" }: RoleSelectProps) => {
         <MenuItem value="USER">Оператор</MenuItem>
         <MenuItem value="TEAMLEAD">Тимлид</MenuItem>
         <MenuItem value="SUPERVISOR">Супервайзер</MenuItem>
+        <MenuItem value="S4S">Sup4Sup</MenuItem>
       </Select>
     </FormControl>
   );

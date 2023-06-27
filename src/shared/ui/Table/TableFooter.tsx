@@ -106,6 +106,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
           component="form"
           height="52px"
           sx={{
+            overflowY: "hidden !important",
             ":hover": {
               bgcolor: (theme) =>
                 theme.palette.mode === "dark"
@@ -134,6 +135,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             </Tooltip>
           </Box>
           <DateTimePicker
+            format={"DD.MM |  HH:mm"}
             slotProps={{
               textField: { size: "small" },
               openPickerButton: {
@@ -142,9 +144,9 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             }}
             sx={{
               fieldset: { border: "0" },
-              width: "195px",
+              width: "165px",
               mr: "20px",
-              minWidth: "195px",
+              minWidth: "165px",
             }}
             onChange={(value) => {
               setStartDate(value);
@@ -178,6 +180,8 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
           </Box>
           <Box
             sx={{
+              mt: "1px",
+              fontSize: "1rem",
               textAlign: "center",
               minWidth: "56px",
               width: "56px",
@@ -224,9 +228,9 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              width: "200px",
+              width: "140px",
               mr: "20px",
-              minWidth: "200px",
+              minWidth: "140px",
               label: { display: "none" },
               "& :before": { display: "none" },
               div: { mt: "0 !important" },
@@ -248,7 +252,7 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
                 mt: "10px",
               },
               mr: "20px",
-              minWidth: "260px",
+              minWidth: "54px",
               label: {
                 "&.Mui-focused": { display: "none" },
                 "&.MuiFormLabel-filled": { display: "none" },

@@ -169,15 +169,6 @@ export const TrainingCard = ({ training }: TrainingCardProps) => {
                 />
                 <TextField
                   required
-                  fullWidth
-                  type="url"
-                  id="training-edit-linkMeet"
-                  label="Ссылка на встречу"
-                  variant="filled"
-                  defaultValue={training.linkMeet}
-                />
-                <TextField
-                  required
                   type="url"
                   fullWidth
                   id="training-edit-linkTg"

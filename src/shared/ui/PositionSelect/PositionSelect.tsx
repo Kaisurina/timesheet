@@ -48,6 +48,10 @@ export const PositionSelect = ({
       </Select>
     </FormControl>
   ) : (
-    <Skeleton height={32} width={200}></Skeleton>
+    <Skeleton
+      sx={{ borderRadius: "5px", mr: "15px" }}
+      height={32}
+      width={125}
+    />
   );
 };

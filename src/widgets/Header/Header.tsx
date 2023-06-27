@@ -194,7 +194,7 @@ export const Header = () => {
                 alignItems: "center",
                 borderRadius: 1,
                 bgcolor: (theme) =>
-                  theme.palette.mode === "dark" ? "#404040" : "#ffaebfae",
+                  theme.palette.mode === "dark" ? "#404040" : "#fa92a861",
                 flexGrow: 0,
 
                 gap: 1,
@@ -260,7 +260,6 @@ export const Header = () => {
                 component="li"
                 display="flex"
                 sx={{
-                  cursor: "pointer",
                   p: "6px",
                   pt: 0,
                   justifyContent: "center",
