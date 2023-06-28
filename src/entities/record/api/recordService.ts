@@ -64,21 +64,6 @@ export const recordsApi = baseApi.injectEndpoints({
         },
       }),
     }),
-    getExcel: builder.mutation<
-      void,
-      {
-        startDate: string;
-        endDate: string;
-      }
-    >({
-      query: (dates) => ({
-        url: `/timesheet_records/accounting/download`,
-        method: "GET",
-        // body: {
-        //   ...dates,
-        // },
-      }),
-    }),
   }),
 });
 
@@ -86,7 +71,6 @@ export const {
   useGetRecordsByUserQuery,
   useUpdateRecordMutation,
   useCreateRecordMutation,
-  useGetExcelMutation,
   useDeleteRecordMutation,
   useGetAccountingQuery,
 } = recordsApi;

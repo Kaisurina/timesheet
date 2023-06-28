@@ -10,9 +10,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { recordsApi } from "entities/record/api/recordService";
+import { DateRangePicker } from "shared/ui";
 
 const Accounting = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(
@@ -53,25 +53,12 @@ const Accounting = () => {
         justifyContent="space-between"
         direction="row"
       >
-        <Stack whiteSpace="pre" alignItems="center" direction="row">
-          <DatePicker
-            sx={{ width: "160px" }}
-            minDate={dayjs.utc(endDate).add(-15, "day")}
-            maxDate={endDate}
-            value={startDate}
-            onChange={(newValue) => setStartDate(newValue)}
-            slotProps={{ textField: { inputProps: { readOnly: true } } }}
-          />
-          &nbsp; — &nbsp;
-          <DatePicker
-            sx={{ width: "160px" }}
-            minDate={startDate}
-            maxDate={dayjs.utc(startDate).add(15, "day")}
-            value={endDate}
-            onChange={(newValue) => setEndDate(newValue)}
-            slotProps={{ textField: { inputProps: { readOnly: true } } }}
-          />
-        </Stack>
+        <DateRangePicker
+          endDate={endDate}
+          startDate={startDate}
+          setEndDate={setEndDate}
+          setStartDate={setStartDate}
+        />
         <Button
           variant="outlined"
           sx={{ height: "fit-content" }}
