@@ -2,10 +2,11 @@ import { IUsersState } from "./../../user/model/user";
 import { Dayjs } from "dayjs";
 
 export interface ITraining {
-  id: string;
+  trainingId: string;
   name: string;
   description: string;
-  date: Dayjs | null;
+  trainingDate: Dayjs | null | string;
+  mentorId: string;
   mentor: IUsersState;
   participants: Array<IUsersState>;
   maxParticipants: number;

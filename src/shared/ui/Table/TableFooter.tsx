@@ -125,8 +125,8 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
         >
           <Box
             sx={{
-              minWidth: "54px",
-              width: "54px",
+              minWidth: "57px",
+              width: "57px",
               py: 1,
             }}
           >
@@ -269,7 +269,14 @@ const CustomFooter = ({ user }: CustomFooterProps) => {
             label="Комментарий"
             variant="standard"
           />
-          <Button sx={{ minWidth: 102, ml: 1, mr: "5px" }} type="submit">
+          <Button
+            disabled={
+              endDate?.format("YYYY-MM-DDTHH:mm:ssZ[Z]") ===
+              startDate?.format("YYYY-MM-DDTHH:mm:ssZ[Z]")
+            }
+            sx={{ minWidth: 102, ml: 1, mr: "5px" }}
+            type="submit"
+          >
             Добавить
           </Button>
         </Stack>

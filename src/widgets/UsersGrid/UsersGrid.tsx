@@ -18,7 +18,6 @@ interface UsersGridProps {
 export const UsersGrid = ({ startDate, endDate }: UsersGridProps) => {
   const [cardUser, setCardUser] = useState<IUsersState | null>(null);
   const [open, setOpen] = useState(false);
-
   const user = useAppSelector((state) => state.user);
   const team = teamApi.useGetTeamByUserQuery({
     startDate: `${startDate?.format("YYYY-MM-DD")}`,

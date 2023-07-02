@@ -1,45 +1,34 @@
-import { useState } from "react";
 import dayjs from "dayjs";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import Dialog from "@mui/material/Dialog";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
-import FaceIcon from "@mui/icons-material/Face";
-import Chip from "@mui/material/Chip";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { ITraining } from "entities/training/model";
+import { useAppSelector } from "shared/libs/redux";
 
 interface TrainingCardProps {
   training: ITraining;
+  handleEditOpen: (training: ITraining) => void;
+  handleViewOpen: (training: ITraining) => void;
 }
 
-export const TrainingCard = ({ training }: TrainingCardProps) => {
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+export const TrainingCard = ({
+  training,
+  handleEditOpen,
+  handleViewOpen,
+}: TrainingCardProps) => {
+  const user = useAppSelector((state) => state.user);
 
   return (
     <Card sx={{ borderRadius: "15px" }} variant="outlined">
       <CardActionArea
+        onClick={() => handleViewOpen(training)}
         component="div"
         sx={{ position: "relative" }}
-        onClick={() => {
-          handleClickOpen();
-        }}
       >
         <CardContent
           sx={{
@@ -62,15 +51,20 @@ export const TrainingCard = ({ training }: TrainingCardProps) => {
           >
             {training.name}
           </Typography>
-          <IconButton
-            size="small"
-            sx={{ position: "absolute", right: 0, top: 0 }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <SettingsIcon />
-          </IconButton>
+          {(user.role === "SUPERVISOR" ||
+            user.role === "MENTOR" ||
+            user.role === "S4S") && (
+            <IconButton
+              size="small"
+              sx={{ position: "absolute", right: 0, top: 0 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditOpen(training);
+              }}
+            >
+              <SettingsIcon />
+            </IconButton>
+          )}
           <Stack
             justifyContent="space-between"
             borderRadius="5px"
@@ -99,9 +93,14 @@ export const TrainingCard = ({ training }: TrainingCardProps) => {
                   ? `${training.participants.length} учеников`
                   : training.participants.length > 1
                   ? `${training.participants.length} ученика`
+                  : training.participants.length === 0
+                  ? "0 учеников"
                   : "1 ученик"}
                 <br />
-                {dayjs.utc().locale("ru").format("DD MMMM HH:MM")}
+                {dayjs
+                  .utc(training.trainingDate)
+                  .locale("ru")
+                  .format("DD MMMM HH:mm")}
               </Typography>
             </Box>
             <Box
@@ -126,99 +125,6 @@ export const TrainingCard = ({ training }: TrainingCardProps) => {
           </Stack>
         </CardContent>
       </CardActionArea>
-      <Dialog
-        maxWidth="md"
-        fullWidth
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="training-edit-dialog-title"
-        aria-describedby="training-edit-dialog-description"
-      >
-        <DialogTitle sx={{ pb: 0 }} textAlign="center">
-          Управление тренингом
-        </DialogTitle>
-        <Box component="form">
-          <DialogContent sx={{ pb: 0 }}>
-            <Stack justifyContent="space-between" direction="row">
-              <Box
-                flexDirection="column"
-                display="flex"
-                justifyContent="space-between"
-                gap={2}
-                width="50%"
-                p={1}
-              >
-                <TextField
-                  required
-                  fullWidth
-                  id="training-edit-name"
-                  label="Название"
-                  maxRows={3}
-                  multiline
-                  variant="filled"
-                  defaultValue={training.name}
-                />
-                <TextField
-                  fullWidth
-                  id="training-edit-description"
-                  label="Описание"
-                  multiline
-                  maxRows={5}
-                  variant="filled"
-                  defaultValue={training.description}
-                />
-                <TextField
-                  required
-                  type="url"
-                  fullWidth
-                  id="training-edit-linkTg"
-                  label="Ссылка на группу тг"
-                  variant="filled"
-                  defaultValue={training.linkTelegram}
-                />
-                <DateTimePicker
-                  slotProps={{ textField: { variant: "filled" } }}
-                  value={dayjs.utc()}
-                  label="Дата тренинга *"
-                />
-              </Box>
-              <Box
-                flexDirection="column"
-                display="flex"
-                gap={2}
-                width="50%"
-                p={1}
-              >
-                {training.participants.map((participant) => (
-                  <Chip
-                    onDelete={() => {}}
-                    sx={{
-                      "& .MuiChip-icon": { position: "absolute", left: 0 },
-                      "& .MuiChip-deleteIcon": {
-                        position: "absolute",
-                        right: 0,
-                      },
-                    }}
-                    key={participant.username}
-                    clickable
-                    icon={<FaceIcon />}
-                    label={participant.fullName}
-                  />
-                ))}
-              </Box>
-            </Stack>
-          </DialogContent>
-          <DialogActions sx={{ justifyContent: "space-between", px: 2 }}>
-            <Button onClick={() => setOpen(false)} color="error">
-              Удалить тренинг
-            </Button>
-            <Box display="flex" gap={1}>
-              <Button onClick={() => setOpen(false)}>Закрыть</Button>
-              <Button type="submit">Изменить</Button>
-            </Box>
-          </DialogActions>
-        </Box>
-      </Dialog>
     </Card>
   );
 };

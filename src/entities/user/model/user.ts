@@ -10,14 +10,26 @@ import { invalidateAccessToken } from "shared/api";
 export const loginThunk = createAsyncThunk(
   "user/login",
   async (data: FormData) => {
-    const response = await fetch(`http://128.140.91.138:9000/api/users/login`, {
-      method: `POST`,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: data.get("email"),
-        password: data.get("password"),
-      }),
-    });
+    // const response = await fetch(`http://128.140.91.138:9000/api/users/login`, {
+    //   method: `POST`,
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     email: data.get("email"),
+    //     password: data.get("password"),
+    //   }),
+    // });
+    const response = await fetch(
+      `https://backend.smkt.pro/touvre/api/users/login`,
+      {
+        method: `POST`,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.get("email"),
+          password: data.get("password"),
+        }),
+      }
+    );
+
     return await response.json();
   }
 );

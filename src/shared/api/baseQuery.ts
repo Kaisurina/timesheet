@@ -14,7 +14,8 @@ export const baseQuery: BaseQueryFn<
   {},
   FetchBaseQueryMeta
 > = fetchBaseQuery({
-  baseUrl: "http://128.140.91.138:9000/api",
+  // baseUrl: "http://128.140.91.138:9000/api",
+  baseUrl: "https://backend.smkt.pro/touvre/api",
   prepareHeaders: (headers, { getState }) => {
     const { token } = (getState() as RootState).user;
 

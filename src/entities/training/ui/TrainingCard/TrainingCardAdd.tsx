@@ -10,29 +10,43 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActionArea from "@mui/material/CardActionArea";
 import AddCircle from "@mui/icons-material/AddCircle";
+import Autocomplete from "@mui/material/Autocomplete";
+import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import dayjs from "dayjs";
+import { Dayjs } from "dayjs";
+import { useCreateTrainingMutation } from "entities/training/api/trainingService";
+import { IUsersState } from "entities/user/model";
+import { usersApi } from "entities/user/api/userService";
 
 export const TrainingCardAdd = () => {
   const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Dayjs | null>(null);
+  const [createTraining] = useCreateTrainingMutation();
+  const [mentor, setMentor] = useState<IUsersState | null>(null);
+  const { data } = usersApi.useGetAllUsersQuery();
+  const isFullNameRepeated = (data: IUsersState[], fullName: string) => {
+    const count = data.filter((option) => option.fullName === fullName).length;
+    return count > 1;
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // createUser({
-    //   positionId: data.get("position"),
-    //   fullName: data.get("fullname"),
-    //   updated: `${Date.now()}`,
-    //   username: data.get("email"),
-    //   password: data.get("password"),
-    //   role: data.get("role"),
-    //   contract: data.get("contract"),
-    //   isDisabled: false,
-    // })
-    //   .then(() => setOpen(false))
-    //   .catch((error) => console.log(error));
+    const data = new FormData(event.currentTarget);
+    createTraining({
+      trainingId: "",
+      name: `${data.get("trainingName")}`,
+      description: `${data.get("trainingDescription")}`,
+      trainingDate: date,
+      mentorId: `${mentor?.userId}`,
+      maxParticipants: +`${data.get("trainingMaxParticipants")}`,
+      linkTelegram: `${data.get("trainingTgLink")}`,
+      level: +`${data.get("trainingLevel")}`,
+      group: `${data.get("trainingGroup")}`,
+    })
+      .then(() => setOpen(false))
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -77,6 +91,7 @@ export const TrainingCardAdd = () => {
                 p={1}
               >
                 <TextField
+                  name="trainingName"
                   required
                   fullWidth
                   id="training-create-name"
@@ -86,6 +101,7 @@ export const TrainingCardAdd = () => {
                   variant="filled"
                 />
                 <TextField
+                  name="trainingDescription"
                   fullWidth
                   id="training-create-description"
                   label="Описание"
@@ -93,24 +109,10 @@ export const TrainingCardAdd = () => {
                   maxRows={4}
                   variant="filled"
                 />
-                <TextField
-                  required
-                  fullWidth
-                  type="url"
-                  id="training-create-linkMeet"
-                  label="Ссылка на встречу"
-                  variant="filled"
-                />
-                <TextField
-                  required
-                  type="url"
-                  fullWidth
-                  id="training-create-linkTg"
-                  label="Ссылка на группу тг"
-                  variant="filled"
-                />
+
                 <Stack gap={1} direction="row">
                   <TextField
+                    name="trainingLevel"
                     required
                     type="number"
                     fullWidth
@@ -119,6 +121,7 @@ export const TrainingCardAdd = () => {
                     variant="filled"
                   />
                   <TextField
+                    name="trainingMaxParticipants"
                     required
                     type="number"
                     fullWidth
@@ -127,17 +130,69 @@ export const TrainingCardAdd = () => {
                     variant="filled"
                   />
                 </Stack>
-                <TextField
-                  required
-                  fullWidth
-                  id="training-create-group"
-                  label="Группа тренинга"
-                  variant="filled"
-                />
+                <Stack gap={1} direction="row">
+                  <TextField
+                    name="trainingTgLink"
+                    required
+                    type="url"
+                    fullWidth
+                    id="training-create-linkTg"
+                    label="Ссылка на группу тг"
+                    variant="filled"
+                  />
+                  <TextField
+                    name="trainingGroup"
+                    required
+                    fullWidth
+                    id="training-create-group"
+                    label="Группа тренинга"
+                    variant="filled"
+                  />
+                </Stack>
+
                 <DateTimePicker
                   slotProps={{ textField: { variant: "filled" } }}
-                  value={dayjs.utc()}
+                  value={date}
+                  onChange={(newValue) => setDate(newValue)}
                   label="Дата тренинга *"
+                />
+                <Autocomplete
+                  value={mentor}
+                  onChange={(e, value: IUsersState | null) => {
+                    setMentor(value);
+                  }}
+                  disablePortal
+                  id="training-user-select"
+                  options={data || []}
+                  renderOption={(props, option) => (
+                    <li key={option.username} {...props}>
+                      {data && isFullNameRepeated(data, option.fullName) ? (
+                        <Tooltip title={option.username}>
+                          <span>{option.fullName}</span>
+                        </Tooltip>
+                      ) : (
+                        `${option.fullName}`
+                      )}
+                    </li>
+                  )}
+                  filterOptions={(options, { inputValue }) => {
+                    return options.filter((option) =>
+                      option.fullName
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    );
+                  }}
+                  getOptionLabel={(option) => option.username}
+                  size="small"
+                  renderInput={(params) => (
+                    <TextField
+                      required
+                      variant="filled"
+                      sx={{ maxHeight: "50%" }}
+                      {...params}
+                      label="Наставник"
+                    />
+                  )}
                 />
               </Box>
             </Stack>

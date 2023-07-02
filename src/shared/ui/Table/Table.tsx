@@ -111,8 +111,8 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
         {
           type: "boolean",
           field: "isConfirmed",
-          headerName: "$",
-          width: 50,
+          headerName: "Виза",
+          width: 53,
           editable: false,
           disableColumnMenu: true,
           cellClassName: (params) =>
@@ -175,7 +175,7 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
             );
           },
           field: "startDate",
-          headerName: "Начало смены",
+          headerName: "Начало",
           width: 185,
           editable: true,
           disableColumnMenu: true,
@@ -217,7 +217,7 @@ export const Table = ({ data, density, user, loading }: TableProps) => {
             );
           },
           field: "endDate",
-          headerName: "Конец смены",
+          headerName: "Конец",
           editable: true,
           width: 125,
           disableColumnMenu: true,

@@ -36,7 +36,7 @@ const pages = [
     access: ["SUPERVISOR", "TEAMLEAD", "MENTOR"],
   },
   {
-    name: "Сотрудники",
+    name: "Управление УЗ",
     link: "employees",
     access: ["SUPERVISOR", "S4S"],
   },
@@ -158,7 +158,9 @@ export const Header = () => {
               d="M25.05 12.34C24.9 5.552 19.354.108 12.532.108 5.614.108 0 5.717 0 12.628h5.01c0 5.526 4.489 10.01 10.02 10.01 5.436 0 9.87-4.333 10.02-9.736v-.562Zm-10.02 5.293a5 5 0 0 1-5.01-5.005 5 5 0 0 1 5.01-5.005 5 5 0 0 1 5.01 5.005 5 5 0 0 1-5.01 5.005ZM96.371"
             />
           </SvgIcon> */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{ gap: 1, flexGrow: 1, display: { xs: "none", md: "flex" } }}
+          >
             {pages.map(
               (page) =>
                 user.role &&
